@@ -26,16 +26,30 @@ root\
         FunctionalTestUtils - Test utilities for functional tests
         MVCFramework.FunctionalTests - functional tests for MVC application targetting NetCore1.1,NetCore2.0 and NET45
         WebApi.FunctionalTests - functional tests for Web API application targetting NetCore1.1,NetCore2.0 and NET45
-		EmptyApp.FunctionalTests - functional tests for an Empty application targetting NetCore1.1,NetCore2.0 and NET45
-        PerfTest - performance test
+		EmptyApp.FunctionalTests - functional tests for an Empty application targetting NetCore1.1,NetCore2.0 and NET45        
 ```
+
+Relation with other Application Insights Repositories
+-----------------------------------------------------
+Microsoft.ApplicationInsights.AspNetCore package depends on the following packages from other Application Insights Repositories.
+1. Microsoft.ApplicationInsights (https://github.com/Microsoft/ApplicationInsights-dotnet)
+	This contains the basic API to send any telemetry to Application Insights Backend and logic for basic in-memory channel, sampling, pre-aggregation etc.
+2. Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel (https://github.com/Microsoft/ApplicationInsights-dotnet)
+	This contains the code for ServerTelemetryChannel (which offers retries, local storing of telemetry etc), AdaptiveSampling etc.
+3. Microsoft.ApplicationInsights.DependencyCollector (https://github.com/Microsoft/ApplicationInsights-dotnet-server)
+	This contains code for collecting dependency telemetry (http, sql, azure storage etc.)
+4. Microsoft.ApplicationInsights.PerfCounterCollector (https://github.com/Microsoft/ApplicationInsights-dotnet-server)
+	This contains code for collecting Windows Performance Counters and Live Metrics feature. Note that the Windows Performance Counters collection module is only available for .NET Framework, and not for .NET Core.
+
 
 Developing
 ----------
 To successfully build the sources on your machine, make sure you've installed the following prerequisites:
-* Visual Studio 2017 Community or Enterprise. Please make sure to install all the latest updates to Visual Studio
+* Visual Studio 2017 Community or Enterprise
 * .NET 4.6
-* .NET Core 2.0
+* .NET Core SDK 1.1.7
+* .NET Core SDK 2.0 or above.(https://www.microsoft.com/net/download/windows)
+
 
 ## Building
 Once you've installed the prerequisites execute ```buildDebug.cmd``` or ```buildRelease.cmd``` script in the repository root to build the project locally.
@@ -57,9 +71,9 @@ There are two sets of tests unit tests and functional tests. Please use unit tes
 Functional tests are regular web applications with unit tests integrated into them. Application can be compiled as a regular web application as well as set of tests. Typical functional tests will do the following:
 
 1. Host the current project in In-Proc server.
-2. Initialize application insights telemetry channel.
-3. Initiate request to self hosted web application using HttpClient.
-4. Check data received in telemetry channel.
+2. Initialize application insights and modify channel to a fake channel controlled by tests.
+3. Initiate request to self hosted web application using HttpClient to trigger various scenarios like requests/dependencies.
+4. Validate data received in the fake channel endpoint.
 
 The following are modifications made to a regular web application to make it work this way:
 
